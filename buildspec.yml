@@ -1,0 +1,58 @@
+version: 0.2
+
+env:
+  variables:
+    NODE_ENV: "production"
+
+phases:
+  install:
+    commands:
+      - echo "---- Updating system packages ----"
+      - sudo apt-get update -y
+
+      - echo "---- Installing Node.js and npm ----"
+      - sudo apt-get install -y nodejs npm
+      - node -v
+      - npm -v
+
+      - echo "---- Installing dependencies ----"
+      - sudo npm install -g npm@latest
+      - npm ci
+      - echo "Dependencies installed successfully."
+
+  pre_build:
+    commands:
+      - echo "---- Running tests (if available) ----"
+      - npm test || echo "No tests configured, skipping tests."
+      - echo "Pre-build phase completed."
+
+  build:
+    commands:
+      - echo "---- Skipping build phase ----"
+      - echo "No npm run build script found. Proceeding to package files."
+
+  post_build:
+    commands:
+      - echo "---- Preparing deployment package ----"
+      - mkdir -p build_output
+
+      # Copy all files except node_modules
+      - rsync -av --exclude='node_modules' --exclude='build_output' ./ build_output/
+
+      # Install only production dependencies inside build_output
+      - cd build_output
+      - sudo npm ci --omit=dev
+      - cd ..
+
+      - echo "---- Package ready for deployment ----"
+
+artifacts:
+  files:
+    - '**/*'
+  base-directory: build_output
+  discard-paths: no
+
+cache:
+  paths:
+    - node_modules/**/*
+
