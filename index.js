@@ -11,8 +11,10 @@ app.get("/api/get", (req,resp)=>{
 app.get("/api/user", (req,resp)=>{
     resp.send({
         username: "Vishalnagar",
+        userid : "mayankagrawa",
         password : "kushal@2002",
         address : "Madhoarjapuar, Kehsortiapatan, kota, rajasthan"
+
     })
 })
 
