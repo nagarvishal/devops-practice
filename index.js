@@ -18,6 +18,14 @@ app.get("/api/user", (req,resp)=>{
     })
 })
 
+app.get("/api/demo",(req,resp)=>{
+    resp.send({
+        name:"hello world",
+        class:8,
+        address:"madhorajpura, Keshoraipatan"
+    })
+})
+
 app.listen(9000,(req,res)=>{
     console.log("server running on port 9000");
 })
